@@ -1,4 +1,4 @@
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -48,8 +48,8 @@ export default function App() {
           console.error("Erro ao buscar dados:", error);
         }); */
 
-      /* Escuta as mudanças no documento em tempo real
-      Isso permite que o aplicativo reaja a alterações no documento sem precisar recarregar
+      /* // Escuta as mudanças no documento em tempo real
+      // Isso permite que o aplicativo reaja a alterações no documento sem precisar recarregar
       onSnapshot(doc(db, "users", "1"), (snapshot) => {
         setNome(snapshot.data()?.nome || "Nome não encontrado");
       }); */
@@ -57,7 +57,7 @@ export default function App() {
       // Obtém todos os documentos da coleção "users"
       const usersRef = collection(db, "users");
 
-      // Busca os dados de todos os documentos na coleção
+      /* // Busca os dados de todos os documentos na coleção
       getDocs(usersRef)
         .then((snapshot) => {
           let lista: { id: any; nome: any; idade: any; cargo: any }[] = [];
@@ -74,7 +74,22 @@ export default function App() {
         })
         .catch((error) => {
           console.error("Erro ao buscar dados:", error);
+        }); */
+
+      // Escuta as mudanças na coleção "users" em tempo real
+      onSnapshot(usersRef, (snapshot) => {
+        let lista: User[] = [];
+        snapshot.forEach((doc) => {
+          lista.push({
+            id: doc.id,
+            nome: doc.data().nome,
+            idade: doc.data().idade,
+            cargo: doc.data().cargo,
+          });
         });
+        // Atualiza o estado com a lista de usuários
+        setUsers(lista);
+      });
     }
 
     getDados();
