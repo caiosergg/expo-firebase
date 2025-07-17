@@ -1,5 +1,7 @@
+import { deleteDoc, doc } from "firebase/firestore";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { db } from "./firebaseConnection";
 
 type Props = {
   data: {
@@ -11,9 +13,18 @@ type Props = {
 };
 
 export default function UsersList({ data }: Props) {
-  const handleDeleteItem = () => {
-    console.log(`Usuário ${data.nome} deletado!`);
-  };
+  // Função para lidar com a exclusão do usuário
+  async function handleDeleteItem() {
+    const docRef = doc(db, "users", data.id);
+    try {
+      // Deleta o documento do Firestore
+      await deleteDoc(docRef);
+      console.log("Usuário deletado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao deletar usuário:", error);
+    }
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.item}>Nome: {data.nome}</Text>
