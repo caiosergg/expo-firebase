@@ -1,6 +1,7 @@
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  FlatList,
   StyleSheet,
   Text,
   TextInput,
@@ -8,11 +9,19 @@ import {
   View,
 } from "react-native";
 import { db } from "../src/firebaseConnection";
+import UsersList from "../src/users";
 
 type Props = {
   nome: string;
   idade: number;
   cargo?: string;
+};
+
+type User = {
+  id: string;
+  nome: string;
+  idade: number;
+  cargo: string;
 };
 
 export default function App() {
@@ -22,6 +31,9 @@ export default function App() {
 
   // Estado para controlar a exibição do formulário
   const [showForm, setShowForm] = useState(false);
+
+  // Estado para armazenar a lista de usuários
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     async function getDados() {
@@ -35,11 +47,34 @@ export default function App() {
         .catch((error) => {
           console.error("Erro ao buscar dados:", error);
         }); */
+
       /* Escuta as mudanças no documento em tempo real
       Isso permite que o aplicativo reaja a alterações no documento sem precisar recarregar
       onSnapshot(doc(db, "users", "1"), (snapshot) => {
         setNome(snapshot.data()?.nome || "Nome não encontrado");
       }); */
+
+      // Obtém todos os documentos da coleção "users"
+      const usersRef = collection(db, "users");
+
+      // Busca os dados de todos os documentos na coleção
+      getDocs(usersRef)
+        .then((snapshot) => {
+          let lista: { id: any; nome: any; idade: any; cargo: any }[] = [];
+          snapshot.forEach((doc) => {
+            lista.push({
+              id: doc.id,
+              nome: doc.data().nome,
+              idade: doc.data().idade,
+              cargo: doc.data().cargo,
+            });
+          });
+
+          setUsers(lista);
+        })
+        .catch((error) => {
+          console.error("Erro ao buscar dados:", error);
+        });
     }
 
     getDados();
@@ -127,6 +162,18 @@ export default function App() {
           {showForm ? "Esconder Formulário" : "Mostrar Formulário"}
         </Text>
       </TouchableOpacity>
+
+      <Text
+        style={{ marginTop: 14, marginLeft: 8, fontSize: 20, color: "#000" }}
+      >
+        Usuários
+      </Text>
+      <FlatList<User>
+        style={styles.list}
+        data={users}
+        keyExtractor={(item) => String(item.id)}
+        renderItem={({ item }) => <UsersList data={item} />}
+      />
     </View>
   );
 }
@@ -158,5 +205,10 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginRight: 8,
     marginBottom: 8,
+  },
+  list: {
+    marginTop: 8,
+    marginLeft: 8,
+    marginRight: 8,
   },
 });
