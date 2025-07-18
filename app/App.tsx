@@ -1,4 +1,10 @@
-import { addDoc, collection, onSnapshot } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  onSnapshot,
+  updateDoc,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -11,17 +17,17 @@ import {
 import { db } from "../src/firebaseConnection";
 import UsersList from "../src/users";
 
-type Props = {
-  nome: string;
-  idade: number;
-  cargo?: string;
-};
-
 type User = {
   id: string;
   nome: string;
   idade: number;
   cargo: string;
+};
+
+type NewUser = {
+  nome: string;
+  idade: number;
+  cargo?: string;
 };
 
 export default function App() {
@@ -34,6 +40,9 @@ export default function App() {
 
   // Estado para armazenar a lista de usuários
   const [users, setUsers] = useState<User[]>([]);
+
+  // Estado para controlar a edição de usuários
+  const [isEditing, setIsEditing] = useState("");
 
   useEffect(() => {
     async function getDados() {
@@ -95,7 +104,7 @@ export default function App() {
     getDados();
   }, []);
 
-  async function handleRegister({ nome, idade, cargo }: Props) {
+  async function handleRegister({ nome, idade, cargo }: NewUser) {
     /* // Adiciona um novo documento na coleção "users"
     await setDoc(doc(db, "users", "2"), {
       nome: "Maria",
@@ -132,6 +141,28 @@ export default function App() {
     setShowForm(!showForm);
   }
 
+  // Função para editar um usuário
+  function editUser(data: User) {
+    setNome(data.nome);
+    setIdade(String(data.idade));
+    setCargo(data.cargo);
+    setIsEditing(data.id);
+  }
+
+  // Função para lidar com a edição do usuário
+  async function handleEditUser() {
+    const docRef = doc(db, "users", isEditing);
+    await updateDoc(docRef, {
+      nome: nome,
+      idade: Number(idade),
+      cargo: cargo,
+    });
+
+    setNome("");
+    setIdade("");
+    setCargo("");
+    setIsEditing("");
+  }
   return (
     <View style={styles.container}>
       {showForm && (
@@ -161,14 +192,20 @@ export default function App() {
             onChangeText={(text) => setCargo(text)}
           />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              handleRegister({ nome, idade: Number(idade), cargo })
-            }
-          >
-            <Text style={styles.buttonText}>Pressione aqui</Text>
-          </TouchableOpacity>
+          {isEditing !== "" ? (
+            <TouchableOpacity style={styles.button} onPress={handleEditUser}>
+              <Text style={styles.buttonText}>Editar usuário</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
+                handleRegister({ nome, idade: Number(idade), cargo })
+              }
+            >
+              <Text style={styles.buttonText}>Adicionar</Text>
+            </TouchableOpacity>
+          )}
         </View>
       )}
 
@@ -187,7 +224,9 @@ export default function App() {
         style={styles.list}
         data={users}
         keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <UsersList data={item} />}
+        renderItem={({ item }) => (
+          <UsersList data={item} handleEdit={(item) => editUser(item)} />
+        )}
       />
     </View>
   );

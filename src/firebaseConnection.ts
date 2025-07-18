@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBnO2R5WP3Br1gtBqFmgLQdx55sm4A6Qi8",
-  authDomain: "fireexpo-89137.firebaseapp.com",
-  projectId: "fireexpo-89137",
-  storageBucket: "fireexpo-89137.firebasestorage.app",
-  messagingSenderId: "130064611822",
-  appId: "1:130064611822:web:2591b3dad007ef85fe76ff",
-  measurementId: "G-CSKL8R6YF8",
+  apiKey: "AIzaSyBbUOhP-y-SKZUz1TYo6vhM3SZ-QWoCyAU",
+  authDomain: "expofire-d58ff.firebaseapp.com",
+  projectId: "expofire-d58ff",
+  storageBucket: "expofire-d58ff.firebasestorage.app",
+  messagingSenderId: "154032791390",
+  appId: "1:154032791390:web:1c458572025af0000439cf",
+  measurementId: "G-EBG36WQ204",
 };
 
 const app = initializeApp(firebaseConfig);

@@ -3,16 +3,19 @@ import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { db } from "./firebaseConnection";
 
-type Props = {
-  data: {
-    id: string;
-    nome: string;
-    idade: number;
-    cargo: string;
-  };
+type User = {
+  id: string;
+  nome: string;
+  idade: number;
+  cargo: string;
 };
 
-export default function UsersList({ data }: Props) {
+type Props = {
+  data: User;
+  handleEdit: (item: User) => void;
+};
+
+export default function UsersList({ data, handleEdit }: Props) {
   // Função para lidar com a exclusão do usuário
   async function handleDeleteItem() {
     const docRef = doc(db, "users", data.id);
@@ -25,13 +28,23 @@ export default function UsersList({ data }: Props) {
     }
   }
 
+  // Função para lidar com a edição do usuário
+  function handleEditUser() {
+    handleEdit(data);
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.item}>Nome: {data.nome}</Text>
       <Text style={styles.item}>Idade: {data.idade}</Text>
       <Text style={styles.item}>Cargo: {data.cargo}</Text>
+
       <TouchableOpacity style={styles.button} onPress={handleDeleteItem}>
         <Text style={styles.buttonText}>Deletar usuário</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.buttonEdit} onPress={handleEditUser}>
+        <Text style={styles.buttonText}>Editar usuário</Text>
       </TouchableOpacity>
     </View>
   );
@@ -59,5 +72,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     paddingLeft: 8,
     paddingRight: 8,
+  },
+  buttonEdit: {
+    backgroundColor: "#000",
+    alignSelf: "flex-start",
+    padding: 4,
+    borderRadius: 4,
+    marginTop: 16,
   },
 });
