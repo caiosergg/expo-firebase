@@ -15,7 +15,7 @@ type Props = {
   handleEdit: (item: User) => void;
 };
 
-export default function UsersList({ data, handleEdit }: Props) {
+export function UsersList({ data, handleEdit }: Props) {
   // Função para lidar com a exclusão do usuário
   async function handleDeleteItem() {
     const docRef = doc(db, "users", data.id);

@@ -1,3 +1,4 @@
+import { FormUsers } from "@/src/FormUsers";
 import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
@@ -25,6 +26,7 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [authUser, setAuthUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
@@ -33,9 +35,12 @@ export default function App() {
           email: user.email,
           uid: user.uid,
         });
-      } else {
-        setAuthUser(null);
+        // Se houver usuário autenticado, define o estado de loading como false
+        setLoading(false);
+        return;
       }
+      setAuthUser(null);
+      setLoading(false);
     });
   }, []);
 
@@ -64,14 +69,30 @@ export default function App() {
     setAuthUser(null);
   }
 
+  if (authUser) {
+    return (
+      <View style={styles.container}>
+        <FormUsers />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/*<FormUsers />*/}
-      <Text
-        style={{ color: "#000", marginLeft: 8, fontSize: 16, marginBottom: 14 }}
-      >
-        Usuário logado: {authUser && authUser.email}
-      </Text>
+      {/*Exibe uma mensagem de carregamento enquanto aguarda a autenticação*/}
+      {loading && (
+        <Text
+          style={{
+            fontSize: 20,
+            marginLeft: 8,
+            marginBottom: 8,
+            color: "#000",
+          }}
+        >
+          Carregando informações...
+        </Text>
+      )}
+
       <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Email</Text>
       <TextInput
         placeholder="Digite seu email..."
@@ -95,7 +116,6 @@ export default function App() {
       >
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-
       <TouchableOpacity
         style={[styles.button, { marginBottom: 8 }]}
         onPress={handleCreateUser}
@@ -103,12 +123,14 @@ export default function App() {
         <Text style={styles.buttonText}>Criar uma conta</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={[styles.button, { backgroundColor: "red" }]}
-        onPress={handleLogout}
-      >
-        <Text style={styles.buttonText}>Sair da conta</Text>
-      </TouchableOpacity>
+      {authUser && (
+        <TouchableOpacity
+          style={[styles.button, { backgroundColor: "red" }]}
+          onPress={handleLogout}
+        >
+          <Text style={styles.buttonText}>Sair da conta</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }

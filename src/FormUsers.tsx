@@ -1,3 +1,5 @@
+import { signOut } from "firebase/auth";
+
 import {
   addDoc,
   collection,
@@ -5,7 +7,9 @@ import {
   onSnapshot,
   updateDoc,
 } from "firebase/firestore";
+
 import React, { useEffect, useState } from "react";
+
 import {
   FlatList,
   StyleSheet,
@@ -14,8 +18,10 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { db } from "./firebaseConnection";
-import UsersList from "./users";
+
+import { auth, db } from "./firebaseConnection";
+
+import { UsersList } from "./users";
 
 type User = {
   id: string;
@@ -163,6 +169,11 @@ export function FormUsers() {
     setCargo("");
     setIsEditing("");
   }
+
+  async function handleLogout() {
+    await signOut(auth);
+  }
+
   return (
     <View style={styles.container}>
       {showForm && (
@@ -215,6 +226,10 @@ export function FormUsers() {
         </Text>
       </TouchableOpacity>
 
+      <TouchableOpacity onPress={handleLogout} style={styles.buttonLogout}>
+        <Text style={{ color: "#fff" }}>Sair da conta</Text>
+      </TouchableOpacity>
+
       <Text
         style={{ marginTop: 14, marginLeft: 8, fontSize: 20, color: "#000" }}
       >
@@ -263,5 +278,12 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginLeft: 8,
     marginRight: 8,
+  },
+  buttonLogout: {
+    backgroundColor: "red",
+    alignSelf: "flex-end",
+    margin: 8,
+    padding: 8,
+    borderRadius: 4,
   },
 });
