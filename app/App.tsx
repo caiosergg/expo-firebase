@@ -1,8 +1,10 @@
 import {
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import {
   StyleSheet,
@@ -24,6 +26,19 @@ export default function App() {
   const [password, setPassword] = useState("");
   const [authUser, setAuthUser] = useState<User | null>(null);
 
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthUser({
+          email: user.email,
+          uid: user.uid,
+        });
+      } else {
+        setAuthUser(null);
+      }
+    });
+  }, []);
+
   async function handleCreateUser() {
     const user = await createUserWithEmailAndPassword(auth, email, password);
     console.log("Usuário criado com sucesso!", user);
@@ -38,17 +53,25 @@ export default function App() {
         });
       })
       .catch((error) => {
-        if (error.code === "auth/invalid-email") {
-          console.log("Email inválido.");
+        if (error.code === "auth/invalid-credential") {
+          console.log("Credenciais inválidas. Verifique o email e a senha.");
         }
-        console.log("Erro ao logar:", error.code);
       });
+  }
+
+  async function handleLogout() {
+    await signOut(auth);
+    setAuthUser(null);
   }
 
   return (
     <View style={styles.container}>
       {/*<FormUsers />*/}
-      <Text>Usuario logado: {authUser && authUser.email}</Text>
+      <Text
+        style={{ color: "#000", marginLeft: 8, fontSize: 16, marginBottom: 14 }}
+      >
+        Usuário logado: {authUser && authUser.email}
+      </Text>
       <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Email</Text>
       <TextInput
         placeholder="Digite seu email..."
@@ -73,8 +96,18 @@ export default function App() {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleCreateUser}>
+      <TouchableOpacity
+        style={[styles.button, { marginBottom: 8 }]}
+        onPress={handleCreateUser}
+      >
         <Text style={styles.buttonText}>Criar uma conta</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: "red" }]}
+        onPress={handleLogout}
+      >
+        <Text style={styles.buttonText}>Sair da conta</Text>
       </TouchableOpacity>
     </View>
   );
