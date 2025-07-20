@@ -1,5 +1,8 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import React from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import React, { useState } from "react";
 
 import {
   StyleSheet,
@@ -11,30 +14,65 @@ import {
 
 import { auth } from "../src/firebaseConnection";
 
+type User = {
+  email: string | null;
+  uid: string;
+};
+
 export default function App() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authUser, setAuthUser] = useState<User | null>(null);
+
   async function handleCreateUser() {
-    const user = await createUserWithEmailAndPassword(
-      auth,
-      "caio@email.com",
-      "123123"
-    );
-    console.log(user);
+    const user = await createUserWithEmailAndPassword(auth, email, password);
+    console.log("Usuário criado com sucesso!", user);
+  }
+  async function handleLogin() {
+    signInWithEmailAndPassword(auth, email, password)
+      .then((user) => {
+        console.log("Usuário logado com sucesso!", user);
+        setAuthUser({
+          email: user.user.email,
+          uid: user.user.uid,
+        });
+      })
+      .catch((error) => {
+        if (error.code === "auth/invalid-email") {
+          console.log("Email inválido.");
+        }
+        console.log("Erro ao logar:", error.code);
+      });
   }
 
   return (
     <View style={styles.container}>
       {/*<FormUsers />*/}
+      <Text>Usuario logado: {authUser && authUser.email}</Text>
       <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Email</Text>
       <TextInput
         placeholder="Digite seu email..."
         style={styles.input}
+        value={email}
+        onChangeText={(text) => setEmail(text)}
       ></TextInput>
 
       <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Senha</Text>
       <TextInput
         placeholder="Digite seu senha..."
         style={styles.input}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        secureTextEntry={true}
       ></TextInput>
+
+      <TouchableOpacity
+        style={[styles.button, { marginBottom: 8 }]}
+        onPress={handleLogin}
+      >
+        <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity style={styles.button} onPress={handleCreateUser}>
         <Text style={styles.buttonText}>Criar uma conta</Text>
       </TouchableOpacity>
