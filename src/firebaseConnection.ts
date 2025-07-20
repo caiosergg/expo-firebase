@@ -1,8 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
+import { getReactNativePersistence, initializeAuth } from "firebase/auth";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
+  // LEMBRAR DE APAGAR AS INFORMAÇÕES DO FIREBASE
+  apiKey: "AIzaSyC5zeKyrb7nYrJhjt62fsKxKBC1u9HvMzU",
   authDomain: "expofire-3ac95.firebaseapp.com",
   projectId: "expofire-3ac95",
   storageBucket: "expofire-3ac95.firebasestorage.app",
@@ -14,4 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-export { db };
+// Inicializa o Firebase Auth com AsyncStorage para persistência
+const auth = initializeAuth(app, {
+  persistence: getReactNativePersistence(AsyncStorage),
+});
+
+export { auth, db };
