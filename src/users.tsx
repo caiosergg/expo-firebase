@@ -1,6 +1,7 @@
 import { deleteDoc, doc } from "firebase/firestore";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
 import { db } from "./firebaseConnection";
 
 type User = {
@@ -35,49 +36,63 @@ export function UsersList({ data, handleEdit }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.item}>Nome: {data.nome}</Text>
-      <Text style={styles.item}>Idade: {data.idade}</Text>
-      <Text style={styles.item}>Cargo: {data.cargo}</Text>
+      <View style={styles.row}>
+        <Text style={styles.item}>Nome: {data.nome}</Text>
+        <TouchableOpacity style={styles.button} onPress={handleDeleteItem}>
+          <Text style={styles.buttonText}>Deletar usuário</Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleDeleteItem}>
-        <Text style={styles.buttonText}>Deletar usuário</Text>
-      </TouchableOpacity>
+      <View style={styles.row}>
+        <Text style={styles.item}>Idade: {data.idade}</Text>
+        <TouchableOpacity style={styles.buttonEdit} onPress={handleEditUser}>
+          <Text style={styles.buttonText}>Editar usuário</Text>
+        </TouchableOpacity>
+      </View>
 
-      <TouchableOpacity style={styles.buttonEdit} onPress={handleEditUser}>
-        <Text style={styles.buttonText}>Editar usuário</Text>
-      </TouchableOpacity>
+      <View style={styles.row}>
+        <Text style={styles.item}>Cargo: {data.cargo}</Text>
+        <TouchableOpacity
+          style={[styles.buttonEdit, { opacity: 0 }]}
+          disabled={true}
+        >
+          <Text style={styles.buttonText}>rs</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f0f0f0",
+    backgroundColor: "#ccc",
     padding: 8,
     borderRadius: 8,
-    marginBottom: 14,
+    marginBottom: 8,
   },
   item: {
     color: "#000",
-    fontSize: 16,
+    fontSize: 14,
   },
   button: {
-    backgroundColor: "#001f3f",
-    padding: 4,
+    backgroundColor: "#000",
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 4,
-    marginTop: 16,
-    alignSelf: "flex-start",
   },
   buttonText: {
     color: "#fff",
-    paddingLeft: 8,
-    paddingRight: 8,
   },
   buttonEdit: {
     backgroundColor: "#000",
-    alignSelf: "flex-start",
-    padding: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
     borderRadius: 4,
-    marginTop: 16,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 5,
   },
 });

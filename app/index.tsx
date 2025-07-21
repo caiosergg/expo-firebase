@@ -5,7 +5,12 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import React, { useEffect, useState } from "react";
+
+import { Anton_400Regular, useFonts } from "@expo-google-fonts/anton";
 
 import {
   StyleSheet,
@@ -44,6 +49,13 @@ export default function App() {
     });
   }, []);
 
+  //
+  const [fontsLoaded] = useFonts({
+    Anton_400Regular,
+  });
+
+  if (!fontsLoaded) return null; // Aguarda carregar a fonte
+
   async function handleCreateUser() {
     const user = await createUserWithEmailAndPassword(auth, email, password);
     console.log("Usuário criado com sucesso!", user);
@@ -78,7 +90,7 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {/*Exibe uma mensagem de carregamento enquanto aguarda a autenticação*/}
       {loading && (
         <Text
@@ -93,25 +105,47 @@ export default function App() {
         </Text>
       )}
 
-      <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Email</Text>
+      <Text style={styles.title}>FireAuth</Text>
+
+      <Text
+        style={{
+          marginLeft: 8,
+          fontSize: 18,
+          color: "#fff",
+          fontWeight: "bold",
+          marginBottom: 8,
+        }}
+      >
+        Email
+      </Text>
       <TextInput
-        placeholder="Digite seu email..."
         style={styles.input}
+        placeholder="Digite seu email..."
         value={email}
         onChangeText={(text) => setEmail(text)}
       ></TextInput>
 
-      <Text style={{ marginLeft: 8, fontSize: 18, color: "#000" }}>Senha</Text>
+      <Text
+        style={{
+          marginLeft: 8,
+          fontSize: 18,
+          color: "#fff",
+          fontWeight: "bold",
+          marginBottom: 8,
+        }}
+      >
+        Senha
+      </Text>
       <TextInput
-        placeholder="Digite seu senha..."
         style={styles.input}
+        placeholder="Digite sua senha..."
         value={password}
         onChangeText={(text) => setPassword(text)}
         secureTextEntry={true}
       ></TextInput>
 
       <TouchableOpacity
-        style={[styles.button, { marginBottom: 8 }]}
+        style={[styles.button, { marginTop: 8, marginBottom: 8 }]}
         onPress={handleLogin}
       >
         <Text style={styles.buttonText}>Login</Text>
@@ -125,26 +159,30 @@ export default function App() {
 
       {authUser && (
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: "red" }]}
+          style={[styles.button, { backgroundColor: "#fff" }]}
           onPress={handleLogout}
         >
           <Text style={styles.buttonText}>Sair da conta</Text>
         </TouchableOpacity>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "#001f3f",
     flex: 1,
-    paddingTop: 40,
+    paddingTop: 20,
   },
   input: {
     marginRight: 8,
     marginLeft: 8,
     borderWidth: 1,
+    padding: 8,
+    borderColor: "#fff",
     marginBottom: 8,
+    color: "#fff",
   },
   button: {
     backgroundColor: "#000",
@@ -155,5 +193,18 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     textAlign: "center",
+  },
+  title: {
+    marginTop: 16,
+    marginBottom: 16,
+    fontSize: 48,
+    fontFamily: "Anton_400Regular",
+    color: "#00f5ff",
+    alignSelf: "center",
+    letterSpacing: 3,
+    textTransform: "uppercase",
+    textShadowColor: "red",
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 6,
   },
 });

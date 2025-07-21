@@ -8,6 +8,8 @@ import {
   updateDoc,
 } from "firebase/firestore";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import React, { useEffect, useState } from "react";
 
 import {
@@ -175,10 +177,10 @@ export function FormUsers() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {showForm && (
         <View>
-          <Text style={styles.label}>Nome:</Text>
+          <Text style={styles.label}>Nome</Text>
           <TextInput
             style={styles.input}
             placeholder="Digite seu nome..."
@@ -186,7 +188,7 @@ export function FormUsers() {
             onChangeText={(text) => setNome(text)}
           />
 
-          <Text style={styles.label}>Idade:</Text>
+          <Text style={styles.label}>Idade</Text>
           <TextInput
             style={styles.input}
             placeholder="Digite sua idade..."
@@ -195,7 +197,7 @@ export function FormUsers() {
             keyboardType="numeric"
           />
 
-          <Text style={styles.label}>Cargo:</Text>
+          <Text style={styles.label}>Cargo</Text>
           <TextInput
             style={styles.input}
             placeholder="Digite seu cargo..."
@@ -220,18 +222,20 @@ export function FormUsers() {
         </View>
       )}
 
-      <TouchableOpacity onPress={handleToggle} style={{ marginTop: 10 }}>
-        <Text style={{ textAlign: "center", color: "#000" }}>
+      <TouchableOpacity onPress={handleToggle} style={{ marginTop: 20 }}>
+        <Text style={{ textAlign: "center", color: "#fff" }}>
           {showForm ? "Esconder Formulário" : "Mostrar Formulário"}
         </Text>
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={handleLogout} style={styles.buttonLogout}>
-        <Text style={{ color: "#fff" }}>Sair da conta</Text>
-      </TouchableOpacity>
-
       <Text
-        style={{ marginTop: 14, marginLeft: 8, fontSize: 20, color: "#000" }}
+        style={{
+          marginTop: 10,
+          marginLeft: 16,
+          fontSize: 20,
+          color: "#fff",
+          fontWeight: "bold",
+        }}
       >
         Usuários
       </Text>
@@ -243,18 +247,23 @@ export function FormUsers() {
           <UsersList data={item} handleEdit={(item) => editUser(item)} />
         )}
       />
-    </View>
+      <TouchableOpacity onPress={handleLogout} style={styles.buttonLogout}>
+        <Text style={{ color: "#fff" }}>Sair da conta</Text>
+      </TouchableOpacity>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#001f3f",
   },
   button: {
     backgroundColor: "#000",
     marginLeft: 8,
     marginRight: 8,
+    marginTop: 8,
   },
   buttonText: {
     color: "#fff",
@@ -262,17 +271,20 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   label: {
-    color: "#000",
-    fontSize: 18,
+    color: "#fff",
+    fontSize: 14,
     marginBottom: 4,
     fontWeight: "bold",
     marginLeft: 8,
   },
   input: {
     borderWidth: 1,
+    padding: 6,
     marginLeft: 8,
     marginRight: 8,
     marginBottom: 8,
+    color: "#fff",
+    borderColor: "#fff",
   },
   list: {
     marginTop: 8,
@@ -281,9 +293,22 @@ const styles = StyleSheet.create({
   },
   buttonLogout: {
     backgroundColor: "red",
-    alignSelf: "flex-end",
+    alignSelf: "center",
     margin: 8,
-    padding: 8,
     borderRadius: 4,
+    paddingHorizontal: 24,
+    paddingVertical: 8,
+  },
+  title: {
+    marginBottom: 8,
+    fontSize: 30,
+    fontFamily: "Anton_400Regular",
+    color: "#00f5ff",
+    alignSelf: "center",
+    letterSpacing: 3,
+    textTransform: "uppercase",
+    textShadowColor: "red",
+    textShadowOffset: { width: 3, height: 3 },
+    textShadowRadius: 6,
   },
 });
