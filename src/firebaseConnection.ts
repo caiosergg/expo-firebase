@@ -6,15 +6,14 @@ import { getReactNativePersistence, initializeAuth } from "firebase/auth";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "expofire-3ac95.firebaseapp.com",
-  projectId: "expofire-3ac95",
-  storageBucket: "expofire-3ac95.firebasestorage.app",
-  messagingSenderId: "914008467371",
-  appId: "1:914008467371:web:bdfc32a22a08b3a5c4d4ee",
-  measurementId: "G-ZCLDEZT4Q6",
+  apiKey: "SUA_CHAVE_API",
+  authDomain: "...",
+  projectId: "...",
+  storageBucket: "...",
+  messagingSenderId: "...",
+  appId: "...",
+  measurementId: "...",
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -24,3 +23,5 @@ const auth = initializeAuth(app, {
 });
 
 export { auth, db };
+
+export default app;
